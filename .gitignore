@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+chat/*/docs/_build/
+chat/*/docs/_modules/
+chat/*/pydist/
+
+gb_chat.sublime-project
+gb_chat.sublime-workspace
