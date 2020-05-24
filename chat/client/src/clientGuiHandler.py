@@ -13,6 +13,11 @@ from db.client.controller import Controller
 from clientWin import Ui_MainWindow
 from utils.keys_gen import gen_keys
 
+
+from profile    import Ui_Dialog as profileWinCls
+
+from photoHandler import make_shaped_photo
+
 class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -21,14 +26,24 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.db_inst = Controller()
 
+        self.profileWinObj      = profileWinCls()
+
+        self.profileForm = None
+
         # активный чат
         self.selectedUser = ""
         self.nickName = ""
 
         self.contacts = []
 
+        # доп окна
+        self.initProfileWin()
+
+
         # запускаем настройки
         self.setUp__connectBtn()
+
+        self.setUp__profileBtn()
 
         self.setUp__contactsList()
 
@@ -40,10 +55,14 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.setup__smilesBtns()
 
+        self.setup__profileOpenFileButton()
+
+
     def closeEvent(self, event):
         """ обрабатываем событие нажатия на главную кнопку закрытия окна """
         print("User has clicked the red x on the main window")
-        event.accept()
+        event.accept()        
+        self.close_application()
         try:
             self.clientIsnt.makeExit()
         except:
@@ -54,6 +73,9 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def setUp__connectBtn(self):
         self.connectBtn.clicked.connect(self.connectToServer)   
+
+    def setUp__profileBtn(self):
+        self.profileBtn.clicked.connect(self.evalShowProfile)   
 
     def setUp__contactsList(self):
         self.conttactsList.doubleClicked.connect(self.evalContactSelect)
@@ -73,6 +95,28 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
         self.smileBtn.clicked.connect(self.evalSmile)
         self.sadBtn.clicked.connect(self.evalSad)
         self.surprizeBtn.clicked.connect(self.evalSurprize)
+
+    def setup__profileOpenFileButton(self):
+        self.profileWinCls_ui.openFileButton.clicked.connect(self.evalSelectPhoto)
+
+
+######################################################################
+    def close_application(self):
+        self.profileForm.close()
+        exit()
+
+    def initProfileWin(self):
+        self.profileForm  = QtWidgets.QDialog()
+        self.profileWinCls_ui = profileWinCls()        
+        self.profileWinCls_ui.setupUi(self.profileForm)
+
+#######################################################################
+    def evalShowProfile(self):
+        if self.profileForm:
+            self.profileForm.close()
+
+        if self.profileWinCls_ui:
+            self.profileForm.show()
 
     def evalBoldToggle(self):
         self.mainFont.setBold(not self.mainFont.bold())
@@ -98,6 +142,13 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
         url = 'imgs/smiles/ai.gif'
         self.messageTE.insertHtml('<img src="%s" />' % url)
 
+    def evalSelectPhoto(self):
+        fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', '/home')[0]
+        pixmap = QtGui.QPixmap.fromImage(make_shaped_photo(fname))
+        self.profileWinCls_ui.photoLab.setPixmap(pixmap)
+        self.clientIsnt.genNewAvatar(fname)
+        self.clientIsnt.sendMsg()
+
     def connectToServer(self):
         self.nickName = self.nickLE.text()
         self.passwd = self.passLE.text()
@@ -109,7 +160,20 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.clientIsnt = Client(ip, port, self.nickName,
                         socket(AF_INET, SOCK_STREAM), self.passwd, gen_keys(self.nickName))
                     self.evalConnection()
+                    print("connected")
+                    self.profileBtn.setEnabled(True)
+                    print("btn enabled")
+
                     self.contacts = self.clientIsnt.getContacts()
+                    print("contacts")
+                    self.avatar = self.clientIsnt.getAvatar()
+                    print("avatar")
+                    if self.avatar:
+                        print("avatar")
+                        qimg = QtGui.QImage.fromData(self.avatar[0])
+                        self.profileWinCls_ui.photoLab.setPixmap(QtGui.QPixmap.fromImage(qimg))
+                        print("pixmap")
+
                     [self.conttactsList.addItem(contact["userName"]) for contact in self.contacts]
 
                     self.receiver = threading.Thread(target=self.recHandler, args=())

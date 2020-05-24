@@ -5,7 +5,7 @@ CONSTS = {
     "default-ip": "127.0.0.1",
     "default-port": 7777,
     "max-connections": 5,
-    "max-pack_len": 10540,
+    "max-pack_len": 205400,
     "logging_level": logging.DEBUG,
     "jim": {
         "action": "action",
@@ -23,6 +23,8 @@ CONSTS = {
             "get_contacts": "get_contacts",
             "add_contact": "add_contact",
             "del_contact": "del_contact",
+            "get_avatar": "get_avatar",
+            "add_avatar": "add_avatar",
             "req_pubkey": "req_pubkey",
             "error": "error",
             "data": "bin",

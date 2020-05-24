@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from sqlalchemy import Column, Integer, BigInteger, Boolean, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, BigInteger, Boolean, String, ForeignKey, DateTime, BLOB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -20,6 +20,9 @@ class Users(Base):
     userInfo = Column(String)
     userPassHash = Column(String)
     userPubKey = Column(String)
+    avatar_id = Column(Integer, ForeignKey('avatars.id'))
+
+    avatars = relationship('Avatars', uselist=True, cascade='delete,all')
 
     def __init__(self, name, info=None, passHash=None, PubKey=None):
         self.userName = name
@@ -29,6 +32,18 @@ class Users(Base):
 
     def __repr__(self):
         return f'<Users({self.userName}, {self.userInfo})>'
+
+class Avatars(Base):
+    __tablename__ = 'avatars'
+    id = Column(Integer, primary_key=True)
+    Data = Column(BLOB)
+
+    def __init__(self, photo):
+        self.Data = photo
+
+    def __repr__(self):
+        return f'<Avatars({self.id})>'
+
 
 class UserStories(Base):
     """Модель таблицы истории клиента"""
@@ -184,6 +199,27 @@ class Controller():
 
         return self.__genDict(contacts)
 
+    def add_avatar(self, owner, photo):
+        print('adding avatar')
+        owner_ = self.session.query(Users).filter_by(userName=owner).first()
+        print(owner_)
+
+        avatar = Avatars(photo=photo)
+        print(avatar)
+        self.session.add(avatar)
+        self.session.commit()
+        print(avatar)
+        owner_.avatar_id = avatar.id
+        self.session.commit()     
+
+    def get_avatar(self, owner):
+        print("get avatat from db")
+        print(owner)
+        owner_ = self.session.query(Users).filter_by(userName=owner).first()
+
+        avatar = self.session.query(Avatars).filter_by(id=owner_.avatar_id).order_by(Avatars.id.desc()).first() # эт ж новый аватар
+          
+        return avatar.Data if avatar else bytearray()
 
 if __name__ == '__main__':
     test_db = Controller()

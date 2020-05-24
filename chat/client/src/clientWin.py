@@ -157,7 +157,7 @@ class Ui_MainWindow(object):
         self.groupBox.setFlat(True)
         self.groupBox.setObjectName("groupBox")
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.groupBox)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(2, 14, 785, 33))
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(0, 20, 785, 30))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout_2.setContentsMargins(5, 5, 5, 5)
@@ -192,16 +192,25 @@ class Ui_MainWindow(object):
         self.portSpin.setProperty("value", 7777)
         self.portSpin.setObjectName("portSpin")
         self.horizontalLayout_2.addWidget(self.portSpin)
+
         self.connectBtn = QtWidgets.QPushButton(self.horizontalLayoutWidget)
         self.connectBtn.setObjectName("connectBtn")
         self.horizontalLayout_2.addWidget(self.connectBtn)
+        
+        self.profileBtn = QtWidgets.QPushButton(self.horizontalLayoutWidget)
+        self.profileBtn.setObjectName("profileBtn")
+        self.profileBtn.setEnabled(False)
+        self.horizontalLayout_2.addWidget(self.profileBtn)
+
+
+
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
-        self.horizontalLayout_2.setStretch(4, 1)
-        self.horizontalLayout_2.setStretch(5, 5)
-        self.horizontalLayout_2.setStretch(6, 1)
-        self.horizontalLayout_2.setStretch(7, 3)
-        self.horizontalLayout_2.setStretch(8, 2)
+        # self.horizontalLayout_2.setStretch(4, 1)
+        # self.horizontalLayout_2.setStretch(5, 5)
+        # self.horizontalLayout_2.setStretch(6, 1)
+        # self.horizontalLayout_2.setStretch(7, 3)
+        # self.horizontalLayout_2.setStretch(8, 2)
         self.horizontalLayout_2.setStretch(9, 10)
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 2)
         self.gridLayout.setColumnStretch(0, 1)
@@ -234,4 +243,5 @@ class Ui_MainWindow(object):
         self.ipLE.setText(_translate("MainWindow", "127.0.0.1"))
         self.label_2.setText(_translate("MainWindow", "Port"))
         self.connectBtn.setText(_translate("MainWindow", "Подключиться"))
+        self.profileBtn.setText(_translate("MainWindow", "Профиль"))
 

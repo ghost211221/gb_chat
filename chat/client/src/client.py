@@ -9,6 +9,9 @@ import hashlib
 import hmac
 import binascii
 
+import base64
+import re
+
 from utils.variables import CONSTS, RESPONCES
 from logs.client_logger import ClientLogger
 from logs.logDecorator import LogDecorator
@@ -148,6 +151,17 @@ class Client(metaclass=ClientMeta):
         }
 
     @LogDecorator()
+    def genReqAvatar(self):
+        """создание запроса аватара"""
+        self.msg = {
+            CONSTS["jim"]["action"]: CONSTS["jim"]["keys"]["get_avatar"],
+            CONSTS["jim"]["time"]: time.time(),
+            CONSTS["jim"]["user"]: {
+                CONSTS["jim"]["account"]: self.name
+            }
+        }
+
+    @LogDecorator()
     def genAddContact(self, contName):
         """создание запроса на добавление контакта"""
         self.msg = {
@@ -178,6 +192,20 @@ class Client(metaclass=ClientMeta):
             CONSTS["jim"]["action"]: CONSTS["jim"]["keys"]["exit"],
             CONSTS["jim"]["time"]: time.time(),
             CONSTS["jim"]["account"]: self.name
+        }
+
+    @LogDecorator()
+    def genNewAvatar(self, filename):
+        """создание сообщения для отправки нового аватара"""
+        img = None
+        with open(filename, "rb") as file:
+            img = file.read()
+
+        self.msg = {
+            CONSTS["jim"]["action"]: CONSTS["jim"]["keys"]["add_avatar"],
+            CONSTS["jim"]["time"]: time.time(),
+            CONSTS["jim"]["user"]: self.name,
+            CONSTS["jim"]["keys"]["data"]: base64.b64encode(img).decode(CONSTS["encoding"])
         }
 
     #######################################################################
@@ -234,6 +262,9 @@ class Client(metaclass=ClientMeta):
                 "alert" in self.responce:
                 print("contacts")
                 self.contacts = self.responce['alert']
+                return self.responce["alert"]
+            elif self.responce[CONSTS["jim"]["keys"]["responce"]] == 203 and \
+                "alert" in self.responce:
                 return self.responce["alert"]
             elif self.responce[CONSTS["jim"]["keys"]["responce"]] == 400:
                 print(f'400 : {self.responce[CONSTS["jim"]["keys"]["error"]]}')
@@ -385,6 +416,23 @@ class Client(metaclass=ClientMeta):
         self.getMsg()
         self.contacts = self.processResp()
         return self.contacts
+
+
+    def getAvatar(self):
+        self.genReqAvatar()
+        print("message: ", self.msg)
+        self.sendMsg()
+        self.getMsg()
+
+        resp = self.processResp()
+        if resp:
+            ans = resp[0]
+            missing_padding = 4-len (resp[0])% 4 
+            print(f"missing padding {missing_padding}")
+            if missing_padding: 
+                ans += '=' * missing_padding 
+
+            return base64.b64decode(ans.encode(CONSTS['encoding']))
 
     def makeExit(self):        
         self.genExit()

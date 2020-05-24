@@ -8,6 +8,8 @@ import hmac
 import hashlib
 import binascii
 
+import base64
+
 from utils.variables import CONSTS, RESPONCES
 # from logs.server_logger import ServerLogger
 from logs.logDecorator import LogDecorator
@@ -145,6 +147,32 @@ class Server(metaclass=ServerMeta):
             else:
                 self.sendMsg(client, {CONSTS["jim"]["keys"]["responce"]: 200})
             return
+        # кладем в базу аватар, ответ не нужен
+        elif CONSTS["jim"]["action"] in message and \
+            message[CONSTS["jim"]["action"]] == CONSTS["jim"]["keys"]["add_avatar"] and \
+            CONSTS["jim"]["time"] in message and CONSTS["jim"]["user"] in message:
+
+            print("putting avatar in db")
+            avatar = message[CONSTS["jim"]["keys"]["data"]]            
+            owner_ = message[CONSTS["jim"]["user"]]
+            print(owner_)
+            print(avatar)
+            print("==============================================")
+
+            self.db_inst.add_avatar(owner_, base64.b64decode(avatar.encode(CONSTS['encoding'])))
+            print("==============================================")
+
+        # возвращаем аватар
+        elif CONSTS["jim"]["action"] in message and \
+            message[CONSTS["jim"]["action"]] == CONSTS["jim"]["keys"]["get_avatar"] and \
+            CONSTS["jim"]["time"] in message and CONSTS["jim"]["user"] in message:
+
+            owner_ = message[CONSTS["jim"]["user"]][CONSTS["jim"]["account"]]
+
+            avatar = self.db_inst.get_avatar(owner_)
+            avatar_ = base64.b64encode(avatar).decode(CONSTS["encoding"])
+            self.sendMsg(client, {CONSTS["jim"]["keys"]["responce"]: 203, "alert": avatar_})
+
         # Если это сообщение, то добавляем его в очередь сообщений. Ответ не требуется.
         elif CONSTS["jim"]["action"] in message and \
             message[CONSTS["jim"]["action"]] == CONSTS["jim"]["keys"]["message"] and \
