@@ -153,8 +153,9 @@ class Server(metaclass=ServerMeta):
             CONSTS["jim"]["time"] in message and CONSTS["jim"]["user"] in message:
 
             print("putting avatar in db")
-            avatar = message[CONSTS["jim"]["keys"]["data"]]            
+            # avatar = message[CONSTS["jim"]["keys"]["data"]]            
             owner_ = message[CONSTS["jim"]["user"]]
+            avatar = client.recv(CONSTS["max-pack_len"])
             print(owner_)
             print(avatar)
             print("==============================================")
@@ -170,8 +171,11 @@ class Server(metaclass=ServerMeta):
             owner_ = message[CONSTS["jim"]["user"]][CONSTS["jim"]["account"]]
 
             avatar = self.db_inst.get_avatar(owner_)
-            avatar_ = base64.b64encode(avatar).decode(CONSTS["encoding"])
-            self.sendMsg(client, {CONSTS["jim"]["keys"]["responce"]: 203, "alert": avatar_})
+            print("got avatar, try to send")
+            client.send(avatar)
+            # avatar_ = base64.b64encode(avatar).decode(CONSTS["encoding"])
+            # self.sendMsg(client, avatar)
+            # self.sendMsg(client, {CONSTS["jim"]["keys"]["responce"]: 203, "alert": avatar_})
 
         # Если это сообщение, то добавляем его в очередь сообщений. Ответ не требуется.
         elif CONSTS["jim"]["action"] in message and \

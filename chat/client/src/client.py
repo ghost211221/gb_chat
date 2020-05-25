@@ -80,6 +80,8 @@ class Client(metaclass=ClientMeta):
 
         self.contacts = []
 
+        self.avatar = None
+
     def __printHelp(self):
         """Функция выводящяя справку по использованию"""
         print('Поддерживаемые команды:')
@@ -197,15 +199,14 @@ class Client(metaclass=ClientMeta):
     @LogDecorator()
     def genNewAvatar(self, filename):
         """создание сообщения для отправки нового аватара"""
-        img = None
         with open(filename, "rb") as file:
-            img = file.read()
+            self.avatar = file.read()
 
         self.msg = {
             CONSTS["jim"]["action"]: CONSTS["jim"]["keys"]["add_avatar"],
             CONSTS["jim"]["time"]: time.time(),
             CONSTS["jim"]["user"]: self.name,
-            CONSTS["jim"]["keys"]["data"]: base64.b64encode(img).decode(CONSTS["encoding"])
+            # CONSTS["jim"]["keys"]["data"]: base64.b64encode(self.avatar).decode(CONSTS["encoding"])
         }
 
     #######################################################################
@@ -422,17 +423,19 @@ class Client(metaclass=ClientMeta):
         self.genReqAvatar()
         print("message: ", self.msg)
         self.sendMsg()
-        self.getMsg()
+        print("try to catch avatar")
+        return self.socket.recv(CONSTS["max-pack_len"])
+        # self.getMsg()
 
-        resp = self.processResp()
-        if resp:
-            ans = resp[0]
-            missing_padding = 4-len (resp[0])% 4 
-            print(f"missing padding {missing_padding}")
-            if missing_padding: 
-                ans += '=' * missing_padding 
+        # resp = self.processResp()
+        # if resp:
+        #     ans = resp[0]
+        #     missing_padding = 4-len (resp[0])% 4 
+        #     print(f"missing padding {missing_padding}")
+        #     if missing_padding: 
+        #         ans += '=' * missing_padding 
 
-            return base64.b64decode(ans.encode(CONSTS['encoding']))
+        #     return base64.b64decode(ans.encode(CONSTS['encoding']))
 
     def makeExit(self):        
         self.genExit()

@@ -148,6 +148,7 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
         self.profileWinCls_ui.photoLab.setPixmap(pixmap)
         self.clientIsnt.genNewAvatar(fname)
         self.clientIsnt.sendMsg()
+        self.clientIsnt.socket.send(self.clientIsnt.avatar)
 
     def connectToServer(self):
         self.nickName = self.nickLE.text()
@@ -170,7 +171,7 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
                     print("avatar")
                     if self.avatar:
                         print("avatar")
-                        qimg = QtGui.QImage.fromData(self.avatar[0])
+                        qimg = QtGui.QImage.fromData(self.avatar)
                         self.profileWinCls_ui.photoLab.setPixmap(QtGui.QPixmap.fromImage(qimg))
                         print("pixmap")
 
