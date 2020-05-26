@@ -33,6 +33,8 @@ class ServerGuiHandler(QtWidgets.QMainWindow, Ui_ServerGui):
         self.server = threading.Thread(target=self.serverInst.runServer, args=())
         self.server.daemon = True
         self.server.start()
+        self.serverStartBt.setEnabled(False)
+        self.serverStatudLab.setText("сервер запущен")
 
     def setUp_clientsList(self):
         self.clientsList.clear()

@@ -99,6 +99,16 @@ class Ui_ServerGui(object):
         self.serverStartBt = QtWidgets.QPushButton(self.gridLayoutWidget)
         self.serverStartBt.setObjectName("serverStartBt")
         self.gridLayout.addWidget(self.serverStartBt, 3, 0, 1, 1)
+
+
+        self.serverStatudLab = QtWidgets.QLabel(self.gridLayoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("Lucida Bright")
+        font.setPointSize(10)
+        self.serverStatudLab.setFont(font)
+        self.serverStatudLab.setObjectName("serverStatudLab")
+        self.gridLayout.addWidget(self.serverStatudLab, 3, 1, 1, 1)
+
         self.gridLayout.setColumnStretch(0, 1)
         self.gridLayout.setColumnStretch(1, 2)
         self.gridLayout.setColumnStretch(2, 2)
@@ -139,6 +149,7 @@ class Ui_ServerGui(object):
         self.ipLab.setText(_translate("ServerGui", "IP"))
         self.portLab.setText(_translate("ServerGui", "Порт"))
         self.serverStartBt.setText(_translate("ServerGui", "Старт сервера"))
+        self.serverStatudLab.setText(_translate("ServerGui", "сервер не запущен"))
         self.menuFile.setTitle(_translate("ServerGui", "File"))
         self.actionExit.setText(_translate("ServerGui", "Exit"))
 
