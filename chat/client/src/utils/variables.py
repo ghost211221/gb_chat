@@ -5,7 +5,7 @@ CONSTS = {
     "default-ip": "127.0.0.1",
     "default-port": 7777,
     "max-connections": 5,
-    "max-pack_len": 254000,
+    "max-pack_len": 2540000,
     "logging_level": logging.DEBUG,
     "jim": {
         "action": "action",
