@@ -66,7 +66,7 @@ class ClientGuiHandler(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             self.clientIsnt.makeExit()
         except:
-            pass
+            print("somethimg happened")
 
         app = QtWidgets.QApplication.instance()
         app.closeAllWindows()

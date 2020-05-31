@@ -1,4 +1,5 @@
 import sys  # sys нужен для передачи argv в QApplication
+import signal
 from PyQt5 import QtWidgets
 
 import socket
@@ -14,4 +15,5 @@ def main():
     app.exec_()  # и запускаем приложение
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     main()
