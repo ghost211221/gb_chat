@@ -1,4 +1,4 @@
-cryptography==2.1.4
+cryptography==3.2
 Pillow==5.1.0
 pycrypto==2.6.1
 PyQt5==5.12
